@@ -1,0 +1,109 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Train Fault Library Standard Schema",
+  "description": "JSON Schema for the Train Fault Library Standard (TFLS)",
+  "type": "object",
+  "required": ["meta", "faults"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "description": "Metadata about the train type and operator",
+      "required": ["operator", "trainType", "schemaVersion", "lastUpdated", "maintainer"],
+      "properties": {
+        "operator": {
+          "type": "string",
+          "description": "Name of the rail operator"
+        },
+        "trainType": {
+          "type": "object",
+          "required": ["name", "code", "manufacturer"],
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Full name of the train type/model"
+            },
+            "code": {
+              "type": "string",
+              "description": "Short code identifying the train type"
+            },
+            "manufacturer": {
+              "type": "string",
+              "description": "Manufacturer of the train"
+            },
+            "yearIntroduced": {
+              "type": "integer",
+              "description": "Year when this train type was introduced to service"
+            }
+          }
+        },
+        "schemaVersion": {
+          "type": "string",
+          "description": "Version of the TFRS schema being used",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "format": "date",
+          "description": "Date when this fault reference was last updated"
+        },
+        "maintainer": {
+          "type": "string",
+          "format": "email",
+          "description": "Email contact for maintenance of this reference file"
+        },
+        "additionalNotes": {
+          "type": "string",
+          "description": "Any additional notes about this reference file"
+        }
+      }
+    },
+    "faults": {
+      "type": "array",
+      "description": "List of all potential faults for this train type",
+      "items": {
+        "type": "object",
+        "required": ["faultName", "system", "category"],
+        "properties": {
+          "faultCode": {
+            "type": "string",
+            "description": "Optional identifier for the fault within this operator's systems"
+          },
+          "faultName": {
+            "type": "string",
+            "description": "Human-readable name of the fault"
+          },
+          "system": {
+            "type": "string",
+            "description": "The train system to which this fault belongs"
+          },
+          "category": {
+            "type": "string",
+            "description": "Severity or importance classification of the fault"
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional detailed description of the fault"
+          },
+          "symptoms": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional observable symptoms of this fault"
+          },
+          "rectificationSteps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional steps to rectify the fault"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional additional notes, warnings, or special instructions"
+          }
+        }
+      }
+    }
+  }
+}

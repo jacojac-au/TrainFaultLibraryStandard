@@ -1,0 +1,55 @@
+{
+    "meta": {
+      "operator": "Example Rail Operator",
+      "trainType": {
+        "name": "Example Electric Multiple Unit",
+        "code": "EMU-100",
+        "manufacturer": "Example Train Manufacturing Ltd",
+        "yearIntroduced": 2020
+      },
+      "schemaVersion": "1.0.0",
+      "lastUpdated": "2025-04-14",
+      "maintainer": "engineering@example-rail.com",
+      "additionalNotes": "This is an example file showing how the TFLS schema can be implemented. This is NOT actual operator data."
+    },
+    "faults": [
+      {
+        "faultCode": "EXO-BRK-001",
+        "faultName": "Brake Pressure Sensor Failure",
+        "system": "Brake System",
+        "category": "Major",
+        "description": "Sensor fails to register correct air pressure in the brake line, potentially causing incorrect brake application or release.",
+        "symptoms": [
+          "Brake warning light on driver control panel",
+          "Inconsistent brake application",
+          "Pressure gauge showing zero or fluctuating readings"
+        ],
+        "rectificationSteps": [
+          "Isolate brake circuit as per safety procedures",
+          "Test sensor with diagnostic equipment",
+          "Replace pressure sensor unit if readings outside tolerance",
+          "Recalibrate brake system using appropriate test equipment"
+        ],
+        "notes": "This fault may occur more frequently in wet conditions. Ensure waterproof seals are properly installed to prevent recurrence."
+      },
+      {
+        "faultName": "Door Control Unit Failure",
+        "system": "Passenger Doors",
+        "category": "Safety-Critical",
+        "symptoms": [
+          "Doors fail to respond to open/close commands",
+          "Door obstruction detection not functioning",
+          "Error codes on driver's display",
+          "Doors opening without command"
+        ],
+        "rectificationSteps": [
+          "Isolate affected door system",
+          "Download error logs from door control system",
+          "Attempt software reset using maintenance terminal",
+          "Replace door control unit if reset unsuccessful",
+          "Upload correct software version and test functionality"
+        ],
+        "notes": "Trains must not operate in passenger service with faulty door control units. This is a safety-critical system requiring proper validation after repair."
+      }
+    ]
+  }
