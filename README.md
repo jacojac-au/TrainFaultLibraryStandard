@@ -153,6 +153,17 @@ zip -r -X example-train.tflsx example-train.tfls manuals
 
 Remember that manuals are often more sensitive than the fault library itself. Only package manuals you are permitted to distribute.
 
+### File types
+
+Applications that open TFLS files should recognise them by these types, so a file shared from Mail, a messaging app or a file browser is offered to the right apps:
+
+| Extension | Uniform Type Identifier | Conforms to | MIME type |
+| --- | --- | --- | --- |
+| `.tfls` | `au.jacojac.tfls` | `public.json`, `public.data` | `application/vnd.tfls+json` |
+| `.tflsx` | `au.jacojac.tflsx` | `public.data` | `application/vnd.tfls.package+zip` |
+
+FaultBuddy exports these types. Other apps should declare them as imported types with the same identifiers.
+
 ## Usage
 
 ### 🔧 For Operators
