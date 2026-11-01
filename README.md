@@ -82,14 +82,14 @@ Although `.tfls` files are structured as JSON, we recommend the `.tfls` extensio
 
 ### Manuals and Manual References
 
-Since schema version `1.1.0`, a file can list the manuals that cover its train type in `meta.manuals`, and each fault can point to the pages that describe it with `manualReferences`. Both are optional, so `1.0.0` files remain valid.
+Since schema version `1.1.0`, a file can list the manuals that cover its train type in `meta.manuals`, and each fault can point to the pages that describe it with `manualReferences`. Both are optional, so `1.0.0` files remain valid. Version `1.2.0` adds an optional `effectiveDate` and `group` to each manual, and makes a fault's `category` optional: a library built from manuals that don't classify their faults should leave it out, and applications then show no classification, rather than a placeholder.
 
 ```json
 {
   "meta": {
     "operator": "Example Operator",
     "trainType": { "name": "Example Train", "code": "EXT", "manufacturer": "Example Manufacturer" },
-    "schemaVersion": "1.1.0",
+    "schemaVersion": "1.2.0",
     "lastUpdated": "2025-04-14",
     "maintainer": "engineering@example.com",
     "manuals": [
@@ -98,6 +98,8 @@ Since schema version `1.1.0`, a file can list the manuals that cover its train t
         "title": "Driver's Manual",
         "documentNumber": "EXT-DM-001",
         "revision": "C",
+        "effectiveDate": "2025-03-01",
+        "group": "Driver's manuals",
         "file": "manuals/drivers-manual.pdf"
       }
     ]
@@ -117,7 +119,13 @@ Since schema version `1.1.0`, a file can list the manuals that cover its train t
 
 - `id` must be unique within the file. Faults refer to a manual by its `id`.
 - `page` is the page of the PDF to open, counting the first page of the file as 1. It is not the number printed on the page, which often differs because of covers and front matter.
+- `section` is shown alongside the reference. If `page` is left out, applications may open the manual at the PDF bookmark or heading with this title, so copy it exactly.
 - `file` is the manual's location inside a TFLS package (see below). Leave it out to cite a manual without distributing it.
+- `documentNumber` should be written the way other manuals cite it (for example `TAN 152`), since applications may turn those citations into links between manuals.
+- `effectiveDate` (since `1.2.0`) is the date from which the manual's `revision` applies, in `YYYY-MM-DD` form.
+- `group` (since `1.2.0`) names the volume, chapter or system a manual belongs to, such as `Volume 6 – Faults and failures` or `Brakes`. Applications group manuals by it when browsing, in the order groups first appear in `manuals`.
+
+Operators often publish a procedure per PDF, so a library may list dozens of manuals. Give each one a `group`, and applications should let readers browse groups and the sections within a manual, search manuals by title, and search the text of every manual at once.
 
 ## TFLS Packages (.tflsx)
 

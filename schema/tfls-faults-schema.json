@@ -73,11 +73,20 @@
               },
               "documentNumber": {
                 "type": "string",
-                "description": "Optional document or part number of the manual"
+                "description": "Optional document or part number of the manual, written the way other manuals cite it (e.g. TAN 152). Applications may link mentions of it in other manuals"
               },
               "revision": {
                 "type": "string",
                 "description": "Optional revision or edition of the manual"
+              },
+              "effectiveDate": {
+                "type": "string",
+                "format": "date",
+                "description": "Optional date from which this revision of the manual applies"
+              },
+              "group": {
+                "type": "string",
+                "description": "Optional volume, chapter or system the manual belongs to (e.g. Volume 6 – Faults and failures, or Brakes). Applications group manuals by it when browsing"
               },
               "file": {
                 "type": "string",
@@ -94,7 +103,7 @@
       "description": "List of all potential faults for this train type",
       "items": {
         "type": "object",
-        "required": ["faultName", "system", "category"],
+        "required": ["faultName", "system"],
         "properties": {
           "faultCode": {
             "type": "string",
@@ -110,7 +119,7 @@
           },
           "category": {
             "type": "string",
-            "description": "Severity or importance classification of the fault"
+            "description": "Optional severity or importance classification of the fault. Leave it out rather than guessing; applications hide the classification when it is absent"
           },
           "description": {
             "type": "string",
@@ -152,7 +161,7 @@
                 },
                 "section": {
                   "type": "string",
-                  "description": "Optional section number or heading in the manual (e.g. 4.2 Brake Cylinder Faults)"
+                  "description": "Optional section number or heading in the manual (e.g. 4.2 Brake Cylinder Faults). Without a page, applications may open the manual at the bookmark or heading with this title"
                 }
               }
             }

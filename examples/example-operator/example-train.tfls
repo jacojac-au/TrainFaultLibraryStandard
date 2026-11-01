@@ -7,7 +7,7 @@
         "manufacturer": "Example Train Manufacturing Ltd",
         "yearIntroduced": 2020
       },
-      "schemaVersion": "1.1.0",
+      "schemaVersion": "1.2.0",
       "lastUpdated": "2025-04-14",
       "maintainer": "engineering@example-rail.com",
       "additionalNotes": "This is an example file showing how the TFLS schema can be implemented. This is NOT actual operator data.",
@@ -17,6 +17,8 @@
           "title": "Driver's Manual",
           "documentNumber": "EMU-100-DM-001",
           "revision": "A",
+          "effectiveDate": "2025-04-01",
+          "group": "Driver's manuals",
           "file": "manuals/drivers-manual.pdf"
         }
       ]
