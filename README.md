@@ -31,7 +31,9 @@ train-fault-library-standard/
 │   └── tfls-faults-schema.json
 ├── examples/                    # Example implementations (not actual operator files)
 │   ├── example-operator/
-│   │   └── example-train.tfls
+│   │   ├── example-train.tfls
+│   │   └── manuals/             # Manuals referenced by example-train.tfls
+│   │       └── drivers-manual.pdf
 │   └── documentation/
 ├── docs/                        # Supporting documentation
 └── README.md                    # You're here!
@@ -78,6 +80,71 @@ Each operator maintains their own confidential `.tfls` file that follows this st
 
 Although `.tfls` files are structured as JSON, we recommend the `.tfls` extension to clearly distinguish them as TFLS documents.
 
+### Manuals and Manual References
+
+Since schema version `1.1.0`, a file can list the manuals that cover its train type in `meta.manuals`, and each fault can point to the pages that describe it with `manualReferences`. Both are optional, so `1.0.0` files remain valid.
+
+```json
+{
+  "meta": {
+    "operator": "Example Operator",
+    "trainType": { "name": "Example Train", "code": "EXT", "manufacturer": "Example Manufacturer" },
+    "schemaVersion": "1.1.0",
+    "lastUpdated": "2025-04-14",
+    "maintainer": "engineering@example.com",
+    "manuals": [
+      {
+        "id": "drivers-manual",
+        "title": "Driver's Manual",
+        "documentNumber": "EXT-DM-001",
+        "revision": "C",
+        "file": "manuals/drivers-manual.pdf"
+      }
+    ]
+  },
+  "faults": [
+    {
+      "faultName": "Brake Pressure Sensor Failure",
+      "system": "Brake System",
+      "category": "Major",
+      "manualReferences": [
+        { "manual": "drivers-manual", "page": 12, "section": "4.2 Brake Pressure Faults" }
+      ]
+    }
+  ]
+}
+```
+
+- `id` must be unique within the file. Faults refer to a manual by its `id`.
+- `page` is the page of the PDF to open, counting the first page of the file as 1. It is not the number printed on the page, which often differs because of covers and front matter.
+- `file` is the manual's location inside a TFLS package (see below). Leave it out to cite a manual without distributing it.
+
+## TFLS Packages (.tflsx)
+
+A TFLS package bundles a `.tfls` file with the PDF manuals it references, so a fault library and its manuals can be distributed as a single file.
+
+A package is a standard ZIP archive with the `.tflsx` extension:
+
+```
+example-train.tflsx
+├── example-train.tfls
+└── manuals/
+    └── drivers-manual.pdf
+```
+
+- The archive must contain exactly one `.tfls` file, either at the root or inside a single top-level folder.
+- Manual paths in `meta.manuals[].file` are relative to the `.tfls` file, use forward slashes, and must not start with `/` or contain `..`.
+- Entries may be stored or Deflate-compressed. Encrypted archives are not supported.
+- PDFs in the package that are not listed in `meta.manuals` may be shown by applications as additional manuals, but cannot be referenced by faults.
+
+Any ZIP tool can create a package. For example, from the folder containing the `.tfls` file:
+
+```bash
+zip -r -X example-train.tflsx example-train.tfls manuals
+```
+
+Remember that manuals are often more sensitive than the fault library itself. Only package manuals you are permitted to distribute.
+
 ## Usage
 
 ### 🔧 For Operators
@@ -96,6 +163,7 @@ Although `.tfls` files are structured as JSON, we recommend the `.tfls` extensio
 - Support filtering by train type, fault category, or severity
 - Provide UI-based rectification workflows based on standardised steps
 - Integrate tags and categories for advanced diagnostics and linking
+- Accept `.tflsx` packages and open a fault's manual references at the referenced page
 
 ## ✅ Schema Validation
 
