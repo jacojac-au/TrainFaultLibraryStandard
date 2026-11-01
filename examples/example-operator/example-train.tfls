@@ -7,10 +7,19 @@
         "manufacturer": "Example Train Manufacturing Ltd",
         "yearIntroduced": 2020
       },
-      "schemaVersion": "1.0.0",
+      "schemaVersion": "1.1.0",
       "lastUpdated": "2025-04-14",
       "maintainer": "engineering@example-rail.com",
-      "additionalNotes": "This is an example file showing how the TFLS schema can be implemented. This is NOT actual operator data."
+      "additionalNotes": "This is an example file showing how the TFLS schema can be implemented. This is NOT actual operator data.",
+      "manuals": [
+        {
+          "id": "drivers-manual",
+          "title": "Driver's Manual",
+          "documentNumber": "EMU-100-DM-001",
+          "revision": "A",
+          "file": "manuals/drivers-manual.pdf"
+        }
+      ]
     },
     "faults": [
       {
@@ -30,7 +39,10 @@
           "Replace pressure sensor unit if readings outside tolerance",
           "Recalibrate brake system using appropriate test equipment"
         ],
-        "notes": "This fault may occur more frequently in wet conditions. Ensure waterproof seals are properly installed to prevent recurrence."
+        "notes": "This fault may occur more frequently in wet conditions. Ensure waterproof seals are properly installed to prevent recurrence.",
+        "manualReferences": [
+          { "manual": "drivers-manual", "page": 7, "section": "4.2 Brake Pressure Sensor Faults" }
+        ]
       },
       {
         "faultName": "Door Control Unit Failure",
@@ -49,7 +61,10 @@
           "Replace door control unit if reset unsuccessful",
           "Upload correct software version and test functionality"
         ],
-        "notes": "Trains must not operate in passenger service with faulty door control units. This is a safety-critical system requiring proper validation after repair."
+        "notes": "Trains must not operate in passenger service with faulty door control units. This is a safety-critical system requiring proper validation after repair.",
+        "manualReferences": [
+          { "manual": "drivers-manual", "page": 9, "section": "5.1 Door Control Unit Faults" }
+        ]
       }
     ]
   }

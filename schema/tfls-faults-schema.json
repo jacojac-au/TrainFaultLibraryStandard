@@ -54,6 +54,38 @@
         "additionalNotes": {
           "type": "string",
           "description": "Any additional notes about this reference file"
+        },
+        "manuals": {
+          "type": "array",
+          "description": "Optional list of manuals that faults can reference. Manual PDFs are distributed alongside the .tfls file in a TFLS package (.tflsx)",
+          "items": {
+            "type": "object",
+            "required": ["id", "title"],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Identifier for this manual, unique within the file. Faults reference manuals by this id"
+              },
+              "title": {
+                "type": "string",
+                "description": "Human-readable title of the manual"
+              },
+              "documentNumber": {
+                "type": "string",
+                "description": "Optional document or part number of the manual"
+              },
+              "revision": {
+                "type": "string",
+                "description": "Optional revision or edition of the manual"
+              },
+              "file": {
+                "type": "string",
+                "pattern": "^(?![/\\\\])(?!.*(^|/)\\.\\.(/|$)).+\\.[Pp][Dd][Ff]$",
+                "description": "Optional path of the manual's PDF inside the TFLS package, relative to the .tfls file and using forward slashes (e.g. manuals/drivers-manual.pdf)"
+              }
+            }
+          }
         }
       }
     },
@@ -101,6 +133,29 @@
           "notes": {
             "type": "string",
             "description": "Optional additional notes, warnings, or special instructions"
+          },
+          "manualReferences": {
+            "type": "array",
+            "description": "Optional references to the pages of manuals that cover this fault",
+            "items": {
+              "type": "object",
+              "required": ["manual"],
+              "properties": {
+                "manual": {
+                  "type": "string",
+                  "description": "The id of a manual listed in meta.manuals"
+                },
+                "page": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "Optional page of the PDF to open, counting the first page of the file as 1 (not the printed page number)"
+                },
+                "section": {
+                  "type": "string",
+                  "description": "Optional section number or heading in the manual (e.g. 4.2 Brake Cylinder Faults)"
+                }
+              }
+            }
           }
         }
       }
