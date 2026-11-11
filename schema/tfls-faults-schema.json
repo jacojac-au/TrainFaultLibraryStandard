@@ -55,6 +55,11 @@
           "type": "string",
           "description": "Any additional notes about this reference file"
         },
+        "categorySource": {
+          "type": "string",
+          "enum": ["manual", "editorial"],
+          "description": "Optional statement of where the faults' category values come from: manual when they are the operator's own classification as written in its manuals, editorial when the library's author chose them. Applications show categories as a severity only when this is manual"
+        },
         "manuals": {
           "type": "array",
           "description": "Optional list of manuals that faults can reference. Manual PDFs are distributed alongside the .tfls file in a TFLS package (.tflsx)",
@@ -73,11 +78,20 @@
               },
               "documentNumber": {
                 "type": "string",
-                "description": "Optional document or part number of the manual"
+                "description": "Optional document or part number of the manual, written the way other manuals cite it (e.g. TAN 152). Applications may link mentions of it in other manuals"
               },
               "revision": {
                 "type": "string",
                 "description": "Optional revision or edition of the manual"
+              },
+              "effectiveDate": {
+                "type": "string",
+                "format": "date",
+                "description": "Optional date from which this revision of the manual applies"
+              },
+              "group": {
+                "type": "string",
+                "description": "Optional volume, chapter or system the manual belongs to (e.g. Volume 6 – Faults and failures, or Brakes). Applications group manuals by it when browsing"
               },
               "file": {
                 "type": "string",
@@ -94,8 +108,13 @@
       "description": "List of all potential faults for this train type",
       "items": {
         "type": "object",
-        "required": ["faultName", "system", "category"],
+        "required": ["faultName", "system"],
         "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Optional identifier for this entry, unique within the file and kept the same from one version of the file to the next. Applications use it to remember bookmarked and recently viewed faults"
+          },
           "faultCode": {
             "type": "string",
             "description": "Optional identifier for the fault within this operator's systems"
@@ -110,7 +129,7 @@
           },
           "category": {
             "type": "string",
-            "description": "Severity or importance classification of the fault"
+            "description": "Optional severity or importance classification of the fault. Leave it out rather than guessing; applications hide the classification when it is absent"
           },
           "description": {
             "type": "string",
@@ -129,6 +148,28 @@
               "type": "string"
             },
             "description": "Optional steps to rectify the fault"
+          },
+          "procedure": {
+            "type": "array",
+            "description": "Optional structured form of rectificationSteps, saying who performs each step and in which situation. Applications use it in place of rectificationSteps when present; keep rectificationSteps as well so older applications still show the steps",
+            "items": {
+              "type": "object",
+              "required": ["text"],
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "description": "What to do, without the actor or context written in front of it"
+                },
+                "actor": {
+                  "type": "string",
+                  "description": "Optional role that performs the step, as the manual names it (e.g. Driver, Guard, Train Crew)"
+                },
+                "context": {
+                  "type": "string",
+                  "description": "Optional situation the step applies to, as the manual names it (e.g. In service, Out depot). Steps of a fault that share a context are alternatives to the steps of its other contexts, not a continuation of them"
+                }
+              }
+            }
           },
           "notes": {
             "type": "string",
@@ -152,7 +193,7 @@
                 },
                 "section": {
                   "type": "string",
-                  "description": "Optional section number or heading in the manual (e.g. 4.2 Brake Cylinder Faults)"
+                  "description": "Optional section number or heading in the manual (e.g. 4.2 Brake Cylinder Faults). Without a page, applications may open the manual at the bookmark or heading with this title"
                 }
               }
             }

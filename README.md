@@ -82,14 +82,14 @@ Although `.tfls` files are structured as JSON, we recommend the `.tfls` extensio
 
 ### Manuals and Manual References
 
-Since schema version `1.1.0`, a file can list the manuals that cover its train type in `meta.manuals`, and each fault can point to the pages that describe it with `manualReferences`. Both are optional, so `1.0.0` files remain valid.
+Since schema version `1.1.0`, a file can list the manuals that cover its train type in `meta.manuals`, and each fault can point to the pages that describe it with `manualReferences`. Both are optional, so `1.0.0` files remain valid. Version `1.2.0` adds an optional `effectiveDate` and `group` to each manual, and makes a fault's `category` optional: a library built from manuals that don't classify their faults should leave it out, and applications then show no classification, rather than a placeholder.
 
 ```json
 {
   "meta": {
     "operator": "Example Operator",
     "trainType": { "name": "Example Train", "code": "EXT", "manufacturer": "Example Manufacturer" },
-    "schemaVersion": "1.1.0",
+    "schemaVersion": "1.2.0",
     "lastUpdated": "2025-04-14",
     "maintainer": "engineering@example.com",
     "manuals": [
@@ -98,6 +98,8 @@ Since schema version `1.1.0`, a file can list the manuals that cover its train t
         "title": "Driver's Manual",
         "documentNumber": "EXT-DM-001",
         "revision": "C",
+        "effectiveDate": "2025-03-01",
+        "group": "Driver's manuals",
         "file": "manuals/drivers-manual.pdf"
       }
     ]
@@ -117,7 +119,47 @@ Since schema version `1.1.0`, a file can list the manuals that cover its train t
 
 - `id` must be unique within the file. Faults refer to a manual by its `id`.
 - `page` is the page of the PDF to open, counting the first page of the file as 1. It is not the number printed on the page, which often differs because of covers and front matter.
+- `section` is shown alongside the reference. If `page` is left out, applications may open the manual at the PDF bookmark or heading with this title, so copy it exactly.
 - `file` is the manual's location inside a TFLS package (see below). Leave it out to cite a manual without distributing it.
+- `documentNumber` should be written the way other manuals cite it (for example `TAN 152`), since applications may turn those citations into links between manuals.
+- `effectiveDate` (since `1.2.0`) is the date from which the manual's `revision` applies, in `YYYY-MM-DD` form.
+- `group` (since `1.2.0`) names the volume, chapter or system a manual belongs to, such as `Volume 6 – Faults and failures` or `Brakes`. Applications group manuals by it when browsing, in the order groups first appear in `manuals`.
+
+Operators often publish a procedure per PDF, so a library may list dozens of manuals. Give each one a `group`, and applications should let readers browse groups and the sections within a manual, search manuals by title, and search the text of every manual at once.
+
+### Structured Steps, Fault Identifiers and Category Source
+
+Version `1.3.0` adds three optional fields. Files written for earlier versions remain valid, and applications written for earlier versions ignore the new fields.
+
+```json
+{
+  "meta": {
+    "schemaVersion": "1.3.0",
+    "categorySource": "manual"
+  },
+  "faults": [
+    {
+      "id": "door-control-unit-failure",
+      "faultName": "Door Control Unit Failure",
+      "system": "Passenger Doors",
+      "rectificationSteps": [
+        "Driver: Isolate affected door system",
+        "Guard: Secure the affected doors out of use and tell passengers"
+      ],
+      "procedure": [
+        { "actor": "Driver", "context": "In service", "text": "Isolate affected door system" },
+        { "actor": "Guard", "context": "In service", "text": "Secure the affected doors out of use and tell passengers" },
+        { "actor": "Maintainer", "context": "At the depot", "text": "Replace door control unit if reset unsuccessful" }
+      ]
+    }
+  ]
+}
+```
+
+- `id` identifies an entry. It must be unique within the file and should stay the same from one version of the file to the next, because applications use it to remember bookmarked and recently viewed faults. `faultCode` remains the code the operator's own systems show, which many manuals don't give and which need not be unique.
+- `procedure` is the structured form of `rectificationSteps`. Each step has its `text`, and may name the `actor` who performs it and the `context` it applies to, using the manual's own words. Applications use `procedure` when it is present, so they can show a Driver only their steps and can keep the steps for different situations apart. Keep `rectificationSteps` as well so older applications still show the steps.
+- Steps that share a `context` belong together. The steps of one context are an alternative to the steps of another (what to do in service, as against at the depot), not a continuation, so applications show each context under its own heading. Leave `context` out for steps that apply whatever the situation.
+- `meta.categorySource` says where the `category` values come from: `manual` when they are the operator's own classification as its manuals write it, `editorial` when the library's author chose them. Applications show categories as a severity only when it is `manual`. A library built from manuals that don't classify their faults should either leave `category` out or declare `editorial`.
 
 ## TFLS Packages (.tflsx)
 
@@ -144,6 +186,17 @@ zip -r -X example-train.tflsx example-train.tfls manuals
 ```
 
 Remember that manuals are often more sensitive than the fault library itself. Only package manuals you are permitted to distribute.
+
+### File types
+
+Applications that open TFLS files should recognise them by these types, so a file shared from Mail, a messaging app or a file browser is offered to the right apps:
+
+| Extension | Uniform Type Identifier | Conforms to | MIME type |
+| --- | --- | --- | --- |
+| `.tfls` | `au.jacojac.tfls` | `public.json`, `public.data` | `application/vnd.tfls+json` |
+| `.tflsx` | `au.jacojac.tflsx` | `public.data` | `application/vnd.tfls.package+zip` |
+
+FaultBuddy exports these types. Other apps should declare them as imported types with the same identifiers.
 
 ## Usage
 

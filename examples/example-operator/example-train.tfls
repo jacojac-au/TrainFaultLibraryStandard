@@ -7,9 +7,10 @@
         "manufacturer": "Example Train Manufacturing Ltd",
         "yearIntroduced": 2020
       },
-      "schemaVersion": "1.1.0",
+      "schemaVersion": "1.3.0",
       "lastUpdated": "2025-04-14",
       "maintainer": "engineering@example-rail.com",
+      "categorySource": "manual",
       "additionalNotes": "This is an example file showing how the TFLS schema can be implemented. This is NOT actual operator data.",
       "manuals": [
         {
@@ -17,12 +18,15 @@
           "title": "Driver's Manual",
           "documentNumber": "EMU-100-DM-001",
           "revision": "A",
+          "effectiveDate": "2025-04-01",
+          "group": "Driver's manuals",
           "file": "manuals/drivers-manual.pdf"
         }
       ]
     },
     "faults": [
       {
+        "id": "brake-pressure-sensor-failure",
         "faultCode": "EXO-BRK-001",
         "faultName": "Brake Pressure Sensor Failure",
         "system": "Brake System",
@@ -45,6 +49,7 @@
         ]
       },
       {
+        "id": "door-control-unit-failure",
         "faultName": "Door Control Unit Failure",
         "system": "Passenger Doors",
         "category": "Safety-Critical",
@@ -60,6 +65,14 @@
           "Attempt software reset using maintenance terminal",
           "Replace door control unit if reset unsuccessful",
           "Upload correct software version and test functionality"
+        ],
+        "procedure": [
+          { "actor": "Driver", "context": "In service", "text": "Isolate affected door system" },
+          { "actor": "Guard", "context": "In service", "text": "Secure the affected doors out of use and tell passengers" },
+          { "actor": "Maintainer", "context": "At the depot", "text": "Download error logs from door control system" },
+          { "actor": "Maintainer", "context": "At the depot", "text": "Attempt software reset using maintenance terminal" },
+          { "actor": "Maintainer", "context": "At the depot", "text": "Replace door control unit if reset unsuccessful" },
+          { "actor": "Maintainer", "context": "At the depot", "text": "Upload correct software version and test functionality" }
         ],
         "notes": "Trains must not operate in passenger service with faulty door control units. This is a safety-critical system requiring proper validation after repair.",
         "manualReferences": [
