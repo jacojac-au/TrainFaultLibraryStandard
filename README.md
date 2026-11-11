@@ -127,6 +127,40 @@ Since schema version `1.1.0`, a file can list the manuals that cover its train t
 
 Operators often publish a procedure per PDF, so a library may list dozens of manuals. Give each one a `group`, and applications should let readers browse groups and the sections within a manual, search manuals by title, and search the text of every manual at once.
 
+### Structured Steps, Fault Identifiers and Category Source
+
+Version `1.3.0` adds three optional fields. Files written for earlier versions remain valid, and applications written for earlier versions ignore the new fields.
+
+```json
+{
+  "meta": {
+    "schemaVersion": "1.3.0",
+    "categorySource": "manual"
+  },
+  "faults": [
+    {
+      "id": "door-control-unit-failure",
+      "faultName": "Door Control Unit Failure",
+      "system": "Passenger Doors",
+      "rectificationSteps": [
+        "Driver: Isolate affected door system",
+        "Guard: Secure the affected doors out of use and tell passengers"
+      ],
+      "procedure": [
+        { "actor": "Driver", "context": "In service", "text": "Isolate affected door system" },
+        { "actor": "Guard", "context": "In service", "text": "Secure the affected doors out of use and tell passengers" },
+        { "actor": "Maintainer", "context": "At the depot", "text": "Replace door control unit if reset unsuccessful" }
+      ]
+    }
+  ]
+}
+```
+
+- `id` identifies an entry. It must be unique within the file and should stay the same from one version of the file to the next, because applications use it to remember bookmarked and recently viewed faults. `faultCode` remains the code the operator's own systems show, which many manuals don't give and which need not be unique.
+- `procedure` is the structured form of `rectificationSteps`. Each step has its `text`, and may name the `actor` who performs it and the `context` it applies to, using the manual's own words. Applications use `procedure` when it is present, so they can show a Driver only their steps and can keep the steps for different situations apart. Keep `rectificationSteps` as well so older applications still show the steps.
+- Steps that share a `context` belong together. The steps of one context are an alternative to the steps of another (what to do in service, as against at the depot), not a continuation, so applications show each context under its own heading. Leave `context` out for steps that apply whatever the situation.
+- `meta.categorySource` says where the `category` values come from: `manual` when they are the operator's own classification as its manuals write it, `editorial` when the library's author chose them. Applications show categories as a severity only when it is `manual`. A library built from manuals that don't classify their faults should either leave `category` out or declare `editorial`.
+
 ## TFLS Packages (.tflsx)
 
 A TFLS package bundles a `.tfls` file with the PDF manuals it references, so a fault library and its manuals can be distributed as a single file.

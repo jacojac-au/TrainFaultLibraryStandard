@@ -55,6 +55,11 @@
           "type": "string",
           "description": "Any additional notes about this reference file"
         },
+        "categorySource": {
+          "type": "string",
+          "enum": ["manual", "editorial"],
+          "description": "Optional statement of where the faults' category values come from: manual when they are the operator's own classification as written in its manuals, editorial when the library's author chose them. Applications show categories as a severity only when this is manual"
+        },
         "manuals": {
           "type": "array",
           "description": "Optional list of manuals that faults can reference. Manual PDFs are distributed alongside the .tfls file in a TFLS package (.tflsx)",
@@ -105,6 +110,11 @@
         "type": "object",
         "required": ["faultName", "system"],
         "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Optional identifier for this entry, unique within the file and kept the same from one version of the file to the next. Applications use it to remember bookmarked and recently viewed faults"
+          },
           "faultCode": {
             "type": "string",
             "description": "Optional identifier for the fault within this operator's systems"
@@ -138,6 +148,28 @@
               "type": "string"
             },
             "description": "Optional steps to rectify the fault"
+          },
+          "procedure": {
+            "type": "array",
+            "description": "Optional structured form of rectificationSteps, saying who performs each step and in which situation. Applications use it in place of rectificationSteps when present; keep rectificationSteps as well so older applications still show the steps",
+            "items": {
+              "type": "object",
+              "required": ["text"],
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "description": "What to do, without the actor or context written in front of it"
+                },
+                "actor": {
+                  "type": "string",
+                  "description": "Optional role that performs the step, as the manual names it (e.g. Driver, Guard, Train Crew)"
+                },
+                "context": {
+                  "type": "string",
+                  "description": "Optional situation the step applies to, as the manual names it (e.g. In service, Out depot). Steps of a fault that share a context are alternatives to the steps of its other contexts, not a continuation of them"
+                }
+              }
+            }
           },
           "notes": {
             "type": "string",
